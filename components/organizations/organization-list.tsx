@@ -8,6 +8,7 @@ import { ResultsHeading } from "@/components/common/results-heading";
 import { ResolveConflictDialog } from "@/components/forms/resolve-conflict-dialog";
 import { StatusBadge } from "@/components/common/production-ui";
 import { RecentAuthGate } from "@/components/common/recent-auth-gate";
+import { ExternalLink } from "@/components/common/external-link";
 import { useRecentAuth } from "@/lib/auth/recent-auth";
 import { signWithFreighter } from "@/lib/wallet/sign-message";
 import {
@@ -351,14 +352,12 @@ function OrganizationRow({
           </div>
           {organization.website && (
             <div className="mt-1 text-xs">
-              <a
+              <ExternalLink
                 href={organization.website}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-cyan-300 hover:text-cyan-200 transition"
               >
                 {organization.website}
-              </a>
+              </ExternalLink>
             </div>
           )}
         </div>
