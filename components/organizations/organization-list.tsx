@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useState } from "react";
-import { updateOrganization, formatOrganizationStatus, getStatusTone, getOrganization, type LifecycleAction } from "@/lib/api/organizations";
+import { updateOrganization, formatOrganizationStatus, getStatusTone, getOrganization, type LifecycleAction, formatCreatedAt, getCreatedAtForSorting } from "@/lib/api/organizations";
 import { ConfirmationDialog } from "@/components/common/confirmation-dialog";
 import { CursorPagination, type PaginationState } from "@/components/common/cursor-pagination";
 import { ResultsHeading } from "@/components/common/results-heading";
@@ -165,7 +165,11 @@ export function OrganizationList({
   const { sortKey, sortDirection, toggleSort, pageItems, page, pageCount, setPage } =
     useDataTableState(organizations, {
       pageSize: 10,
-      getSortValue: (org, key) => (key === "name" ? org.name : org.status),
+      getSortValue: (org, key) => {
+        if (key === "name") return org.name;
+        if (key === "created") return getCreatedAtForSorting(org.createdAt);
+        return org.status;
+      },
     });
 
   if (loading && organizations.length === 0) {
@@ -201,7 +205,12 @@ export function OrganizationList({
             >
               Status
             </DataTableHeadCell>
-            <DataTableHeadCell>Created</DataTableHeadCell>
+            <DataTableHeadCell
+              sortDirection={sortKey === "created" ? sortDirection : undefined}
+              onSort={() => toggleSort("created")}
+            >
+              Created
+            </DataTableHeadCell>
             <DataTableHeadCell>Actions</DataTableHeadCell>
           </DataTableHead>
           {organizations.length === 0 ? (
@@ -371,8 +380,7 @@ function OrganizationRow({
 
       <DataTableCell>
         <div className="text-slate-400">
-          {/* Using placeholder since creation date is not in API response */}
-          Recently
+          {formatCreatedAt(organization.createdAt)}
         </div>
       </DataTableCell>
 
